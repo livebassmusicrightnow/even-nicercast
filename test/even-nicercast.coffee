@@ -16,7 +16,7 @@ describe "EvenNicercast", ->
 
   describe "##constructor", ->
     it "should set defaults", ->
-      defaults = ["log", "error", "name", "port", "metaint", "address", "buffer"]
+      defaults = ["log", "error", "name", "port", "metaint", "address", "buffer", "mount"]
       expect(server[key]).to.exist for key in defaults
 
     it "should set options", ->
@@ -28,6 +28,7 @@ describe "EvenNicercast", ->
         metaint: 8193
         address: "127.0.0.2"
         buffer:  192 * 1024 * 31 # 192Kbps * 30s
+        mount:  "/mounttest"
 
       server = new Server options
 
@@ -75,12 +76,12 @@ describe "EvenNicercast", ->
       expect(value).to.equal "audio/x-mpegurl"
 
     it "should send the stream URI", ->
-      {address, port} = server
+      {address, port, mount} = server
 
       await
         res.send = defer uri
         server.playlistEndpoint null, res
 
-      expect(uri).to.equal "http://#{address}:#{port}/listen"
+      expect(uri).to.equal "http://#{address}:#{port}/#{mount}"
 
 
