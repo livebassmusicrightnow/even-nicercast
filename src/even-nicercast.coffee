@@ -34,6 +34,7 @@ class EvenNicercast extends stream.PassThrough
   metaint: 8192
   address: "127.0.0.1"
   buffer:  192 * 1024 * 30 # 192Kbps * 30s
+  mount:  "/listen"
 
   constructor: (o) ->
     @[key] = value for key, value of o
@@ -48,14 +49,14 @@ class EvenNicercast extends stream.PassThrough
     @app.get "/",           @playlistEndpoint
     @app.get "/listen.m3u", @playlistEndpoint
     # audio endpoint
-    @app.get "/listen",     @listener
+    @app.get @mount,     @listener
 
   playlistEndpoint: (req, res) =>
     @log "serving playlist"
     # stream playlist (points to other endpoint)
     res.status 200
     res.set "Content-Type", "audio/x-mpegurl"
-    res.send "http://#{@address}:#{@port}/listen"
+    res.send "http://#{@address}:#{@port}/#{@mount}"
 
   listener: (req, res, next) =>
     @log "listening"
