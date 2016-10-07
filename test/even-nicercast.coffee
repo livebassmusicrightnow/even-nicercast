@@ -29,6 +29,7 @@ describe "EvenNicercast", ->
         port:    8001
         metaint: 8193
         address: "127.0.0.2"
+        advertise: "remotehost"
         buffer:  192 * 1024 * 31 # 192Kbps * 30s
         mount:  "/mounttest"
 
@@ -80,13 +81,13 @@ describe "EvenNicercast", ->
       done()
 
     it "should send the stream URI", (done) ->
-      {address, port, mount} = server
+      {advertise, port, mount} = server
 
       await
         res.send = defer uri
         server.playlistEndpoint null, res
 
-      expect(uri).to.equal "http://#{address}:#{port}/#{mount}"
+      expect(uri).to.equal "http://#{advertise}:#{port}/#{mount}"
       done()
 
   describe "listener", ->
