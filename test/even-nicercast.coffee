@@ -62,22 +62,24 @@ describe "EvenNicercast", ->
     afterEach ->
       res = null
 
-    it "should set status 200", ->
+    it "should set status 200", (done) ->
       await
         res.status = defer status
         server.playlistEndpoint null, res
 
       expect(status).to.equal 200
+      done()
 
-    it "should set contenttype", ->
+    it "should set contenttype", (done) ->
       await
         res.set = defer header, value
         server.playlistEndpoint null, res
 
       expect(header).to.equal "Content-Type"
       expect(value).to.equal "audio/x-mpegurl"
+      done()
 
-    it "should send the stream URI", ->
+    it "should send the stream URI", (done) ->
       {address, port, mount} = server
 
       await
@@ -85,6 +87,7 @@ describe "EvenNicercast", ->
         server.playlistEndpoint null, res
 
       expect(uri).to.equal "http://#{address}:#{port}/#{mount}"
+      done()
 
   describe "listener", ->
     req = null
@@ -104,7 +107,7 @@ describe "EvenNicercast", ->
       req = null
       res = null
 
-    it "should write statusCode and headers", ->
+    it "should write statusCode and headers", (done) ->
       defaults =
         "Content-Type": "audio/mpeg"
         "Connection":   "close"
@@ -115,8 +118,9 @@ describe "EvenNicercast", ->
 
       expect(statusCode).to.eql 200
       expect(headers).to.eql defaults
+      done()
 
-    it "should write icy-metaint header", ->
+    it "should write icy-metaint header", (done) ->
       defaults =
         "Content-Type": "audio/mpeg"
         "Connection":   "close"
@@ -129,8 +133,9 @@ describe "EvenNicercast", ->
         server.listener req, res
 
       expect(headers).to.eql defaults
+      done()
 
-    it "should pipe data through an Icy.Writer", ->
+    it "should pipe data through an Icy.Writer", (done) ->
       res           = new stream.PassThrough decodeStrings: false
       res.writeHead = ->
       req.headers   = "icy-metadata": 1
@@ -144,3 +149,4 @@ describe "EvenNicercast", ->
         server.write "test"
 
       expect(metadata).to.equal server.name
+      done()
