@@ -135,6 +135,37 @@ describe "EvenNicercast", ->
       expect(headers).to.eql defaults
       done()
 
+    it "should pipe data to the response", (done) ->
+      res           = new stream.PassThrough
+      res.writeHead = ->
+      reader        = new Icy.Reader server.metaint
+
+      server.listener req, res
+      res.pipe reader
+
+      reader.once "metadata", done
+      data = new Buffer 8192
+      await
+        server.once "data", defer piped
+        server.write data
+
+      expect(piped).to.equal data
+      done()
+
+    it "should unpipe from the response when connection closes", (done) ->
+      res           = new stream.PassThrough
+      res.writeHead = ->
+      req.connection = new stream.PassThrough
+
+      server.listener req, res
+
+      await
+        res.once "unpipe", defer source
+        req.connection.emit "close"
+
+      expect(source).to.equal server
+      done()
+
     it "should pipe data through an Icy.Writer", (done) ->
       res           = new stream.PassThrough
       res.writeHead = ->
