@@ -88,18 +88,16 @@ class EvenNicercast extends stream.PassThrough
 
   setMetadata: (@metadata) ->
 
-  start: (port = @port, callback = ->) ->
-    @log "starting server on :#{port}"
-    await @server = (http.createServer @app).listen port, defer()
-    @port = @server.address().port
-    callback @port
+  start: (callback = ->) ->
+    @log "starting server on :#{@port}"
+    await @server = (http.createServer @app).listen @port, @address, defer()
+    callback()
 
-  stop: ->
+  stop: (callback = ->) ->
     @log "stopping"
-    try
-      @server.close()
-    catch err
-      @error err
+    await @server.close defer err
+    @error err if err
+    callback err
 
 
 module.exports = EvenNicercast
