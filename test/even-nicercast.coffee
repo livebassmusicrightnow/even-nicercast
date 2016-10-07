@@ -184,7 +184,7 @@ describe "EvenNicercast", ->
       done()
 
     it "should remove data listener and unpipe from Icy.Writer when connection closes", (done) ->
-      res           = new stream.PassThrough decodeStrings: false
+      res           = new stream.PassThrough
       res.writeHead = ->
       req.headers   = "icy-metadata": 1
       req.connection = new stream.PassThrough
