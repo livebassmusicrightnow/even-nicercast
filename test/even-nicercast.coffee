@@ -84,4 +84,46 @@ describe "EvenNicercast", ->
 
       expect(uri).to.equal "http://#{address}:#{port}/#{mount}"
 
+  describe "listener", ->
+    req = null
+    res = null
 
+    beforeEach ->
+      res =
+        writeHead: ->
+        on: ->
+        once: ->
+        emit: ->
+      req =
+        headers: {}
+        connection: on: ->
+
+    afterEach ->
+      req = null
+      res = null
+
+    it "should write statusCode and headers", ->
+      defaults =
+        "Content-Type": "audio/mpeg"
+        "Connection":   "close"
+
+      await
+        res.writeHead = defer statusCode, headers
+        server.listener req, res
+
+      expect(statusCode).to.eql 200
+      expect(headers).to.eql defaults
+
+    it "should write icy-metaint header", ->
+      defaults =
+        "Content-Type": "audio/mpeg"
+        "Connection":   "close"
+        "icy-metaint":  8192
+
+      req.headers = "icy-metadata": 1
+
+      await
+        res.writeHead = defer statusCode, headers
+        server.listener req, res
+
+      expect(headers).to.eql defaults
