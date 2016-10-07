@@ -10,6 +10,11 @@ Icecast/Shoutcast server implemented using NodeJS Streams
 
 [![NPM][npm-stats]][npm]
 
+## Installation
+```sh
+npm install --save even-nicercast
+```
+
 ## License
 
 MIT
