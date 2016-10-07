@@ -30,6 +30,7 @@
   "homepage": "https://github.com/livebassmusicrightnow/even-nicercast#readme",
   "dependencies": {
     "express": "^4.14.0",
+    "iced-runtime": "^1.0.3",
     "icy": "^2.1.0"
   },
   "peerDependencies": {
