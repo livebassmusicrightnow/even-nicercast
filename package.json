@@ -1,0 +1,47 @@
+{
+  "name": "even-nicercast",
+  "version": "1.0.0",
+  "description": "Icecast/Shoutcast server implemented using NodeJS Streams",
+  "main": "lib/even-nicercast.js",
+  "scripts": {
+    "test": "npm run test:modules && npm run test:coverage",
+    "test:modules": "mocha --recursive --compilers coffee:iced-coffee-script/register --require iced-coffee-coverage/register-istanbul test/",
+    "test:coverage": "istanbul report",
+    "build": "iced --bare --map --runtime node -o lib/ -c src/",
+    "watch": "iced --watch --bare --map --runtime node -o lib/ -c src/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/livebassmusicrightnow/even-nicercast.git"
+  },
+  "keywords": [
+    "icecast",
+    "shoutcast",
+    "streams",
+    "relay",
+    "bass",
+    "music"
+  ],
+  "author": "doublerebel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/livebassmusicrightnow/even-nicercast/issues"
+  },
+  "homepage": "https://github.com/livebassmusicrightnow/even-nicercast#readme",
+  "dependencies": {
+    "express": "^4.14.0",
+    "icy": "^2.1.0"
+  },
+  "peerDependencies": {
+    "lame": "^1.2.4"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "coveralls": "^2.11.14",
+    "iced-coffee-coverage": "^1.0.3",
+    "iced-coffee-script": "^108.0.11",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.1.0",
+    "sinon": "^1.17.6"
+  }
+}
