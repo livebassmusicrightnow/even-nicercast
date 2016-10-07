@@ -76,7 +76,8 @@ class EvenNicercast extends stream.PassThrough
     prevMetadata  = 0
     icyWriter     = new Icy.Writer @metaint
     icyWriter.disableMetadata = !acceptsMetadata
-    queueMetadata = (metadata = @metadata or @name) =>
+    queueMetadata = =>
+      metadata = @metadata or @name
       return unless acceptsMetadata and metadata isnt prevMetadata
       metadata = metadata.toString() if metadata instanceof Buffer
       @log "queueing metadata", metadata
