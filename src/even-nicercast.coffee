@@ -15,6 +15,7 @@ class EvenNicercast extends stream.PassThrough
   port:    8000
   metaint: 8192
   address: "127.0.0.1"
+  advertise: "localhost"
   buffer:  192 * 1024 * 30 # 192Kbps * 30s
   mount:  "/listen"
 
@@ -38,7 +39,7 @@ class EvenNicercast extends stream.PassThrough
     # stream playlist (points to other endpoint)
     res.status 200
     res.set "Content-Type", "audio/x-mpegurl"
-    res.send "http://#{@address}:#{@port}/#{@mount}"
+    res.send "http://#{@advertise}:#{@port}/#{@mount}"
 
   listener: (req, res, next) =>
     @log "listening"
