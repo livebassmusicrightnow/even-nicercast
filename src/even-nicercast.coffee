@@ -73,16 +73,16 @@ class EvenNicercast extends stream.PassThrough
     res.writeHead 200, headers
 
     # setup metadata transport
-    prevMetadata = 0
+    prevMetadata  = 0
+    icyWriter     = new Icy.Writer @metaint
+    icyWriter.disableMetadata = !acceptsMetadata
     queueMetadata = (metadata = @metadata or @name) =>
-      return unless acceptsMetadata and prevMetadata isnt metadata
+      return unless acceptsMetadata and metadata isnt prevMetadata
       @log "queueing metadata"
       icyWriter.queueMetadata metadata
       prevMetadata = metadata
 
     @log "laying pipe"
-    icyWriter = new Icy.Writer @metaint
-    icyWriter.disableMetadata = true unless acceptsMetadata
     queueMetadata()
     icyWriter.pipe res, end: false
     @pipe icyWriter, end: false
@@ -93,7 +93,7 @@ class EvenNicercast extends stream.PassThrough
       @removeListener "data", queueMetadata
       @unpipe icyWriter
 
-  setMetadata: (@metadata) -> @queueMetadata()
+  setMetadata: (@metadata) ->
 
   start: (port = @port, callback = ->) ->
     @log "starting server on :#{port}"
