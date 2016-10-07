@@ -1,6 +1,8 @@
+stream     = require "stream"
 {expect}   = require "chai"
 {spy}      = require "sinon"
 express    = require "express"
+Icy        = require "icy"
 Server     = require "../src/even-nicercast"
 
 
@@ -127,3 +129,18 @@ describe "EvenNicercast", ->
         server.listener req, res
 
       expect(headers).to.eql defaults
+
+    it "should pipe data through an Icy.Writer", ->
+      res           = new stream.PassThrough decodeStrings: false
+      res.writeHead = ->
+      req.headers   = "icy-metadata": 1
+      reader        = new Icy.Reader server.metaint
+
+      server.listener req, res
+      res.pipe reader
+
+      await
+        reader.once "metadata", defer metadata
+        server.write "test"
+
+      expect(metadata).to.equal server.name
