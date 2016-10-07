@@ -199,3 +199,9 @@ describe "EvenNicercast", ->
 
       expect(server.listenerCount "data").to.equal 0
       done()
+
+  describe "##setMetadata", ->
+    it "should set the metadata", ->
+      metadata = "testmeta"
+      server.setMetadata metadata
+      expect(server.metadata).to.equal metadata
