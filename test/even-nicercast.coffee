@@ -136,7 +136,7 @@ describe "EvenNicercast", ->
       done()
 
     it "should pipe data through an Icy.Writer", (done) ->
-      res           = new stream.PassThrough decodeStrings: false
+      res           = new stream.PassThrough
       res.writeHead = ->
       req.headers   = "icy-metadata": 1
       reader        = new Icy.Reader server.metaint
@@ -146,7 +146,25 @@ describe "EvenNicercast", ->
 
       await
         reader.once "metadata", defer metadata
-        server.write "test"
+        server.write new Buffer 8192
 
-      expect(metadata).to.equal server.name
+      expect(metadata.toString()).to.match new RegExp "StreamTitle='#{server.name}'"
+      expect(server.listenerCount "data").to.equal 2
+      done()
+
+    it "should remove data listener and unpipe from Icy.Writer when connection closes", (done) ->
+      res           = new stream.PassThrough decodeStrings: false
+      res.writeHead = ->
+      req.headers   = "icy-metadata": 1
+      req.connection = new stream.PassThrough
+      reader        = new Icy.Reader server.metaint
+
+      server.listener req, res
+      res.pipe reader
+
+      reader.once "metadata", done
+      req.connection.emit "close"
+      server.write new Buffer 8192
+
+      expect(server.listenerCount "data").to.equal 0
       done()
