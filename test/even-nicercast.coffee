@@ -206,3 +206,20 @@ describe "EvenNicercast", ->
       metadata = "testmeta"
       server.setMetadata metadata
       expect(server.metadata).to.equal metadata
+
+  describe "##start", ->
+    it "should start the http server", (done) ->
+      await server.start defer()
+      expect(server.server).to.exist
+      server.server.close done
+
+  describe "##stop", ->
+    it "should stop the http server", (done) ->
+      await server.start defer()
+
+      server.on "error", done
+      await
+        server.server.once "close", defer()
+        server.stop()
+
+      done()
