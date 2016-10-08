@@ -13,6 +13,7 @@ class EncodingServer extends stream.PassThrough
   CHANNELS:    2
   SAMPLE_RATE: 44100
 
+  BIT_RATE:    128
 
   constructor: (o = {}, encodingOptions) ->
     super
@@ -20,6 +21,7 @@ class EncodingServer extends stream.PassThrough
     @[key] = value for key, value of encodingOptions
     @log   = o.log   if o.log
     @error = o.error if o.error
+    o.buffer or= @BIT_RATE * 125 * 30 # Kbps * 30s
 
     @server = new EvenNicercast o
 
@@ -29,6 +31,7 @@ class EncodingServer extends stream.PassThrough
       channels:   @CHANNELS
       bitDepth:   @SAMPLE_SIZE
       sampleRate: @SAMPLE_RATE
+      bitRate:    @BIT_RATE
 
     @pipe @encoder
     @encoder.pipe @server

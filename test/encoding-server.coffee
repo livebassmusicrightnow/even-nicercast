@@ -10,9 +10,10 @@ describe "EncodingServer", ->
   server = null
   log    = ->
   port   = 7999
+  BIT_RATE = 96
 
   beforeEach ->
-    server = new Server {port, log}
+    server = new Server {port, log}, {BIT_RATE}
 
   afterEach ->
     server = null
@@ -31,6 +32,7 @@ describe "EncodingServer", ->
         SAMPLE_SIZE: 16
         CHANNELS:    1
         SAMPLE_RATE: 88200
+        BIT_RATE:    BIT_RATE
 
       server = new Server null, options
 
@@ -46,3 +48,4 @@ describe "EncodingServer", ->
       expect(server.server.log).to.equal server.log
       expect(server.server.error).to.equal server.error
       expect(server.server.port).to.equal port
+      expect(server.server.buffer).to.equal BIT_RATE * 125 * 30
