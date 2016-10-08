@@ -1,5 +1,6 @@
 stream        = require "stream"
-EvenNicercast = require "../src/even-nicercast"
+EvenNicercast = require "./even-nicercast"
+
 
 class EncodingServer extends stream.PassThrough
   logPrefix: "(EvenNicercast:EncodingServer)"
@@ -18,10 +19,6 @@ class EncodingServer extends stream.PassThrough
     @log "creating"
     super()
 
-    # If we"re getting raw PCM data as expected, calculate the number of bytes
-    # that need to be read for `1 Second` of audio data.
-    BLOCK_ALIGN      = @SAMPLE_SIZE / 8 * @CHANNELS
-    BYTES_PER_SECOND = @SAMPLE_RATE * @BLOCK_ALIGN
 
     # setup encoder
     Lame     = require "lame"

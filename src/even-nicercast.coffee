@@ -7,8 +7,6 @@ Icy     = require "icy"
 class EvenNicercast extends stream.PassThrough
   logPrefix: "(EvenNicercast)"
 
-  @EncodingServer: require "./encoding-server"
-
   log:     console.log
   error:   console.error
   name:    "EvenNicercast"
@@ -89,7 +87,7 @@ class EvenNicercast extends stream.PassThrough
   setMetadata: (@metadata) ->
 
   start: (callback = ->) ->
-    @log "starting server on :#{@port}"
+    @log "starting server on #{@address}:#{@port}"
     await @server = (http.createServer @app).listen @port, @address, defer()
     callback()
 
