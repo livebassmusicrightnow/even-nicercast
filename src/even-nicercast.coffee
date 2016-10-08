@@ -14,7 +14,7 @@ class EvenNicercast extends stream.PassThrough
   metaint: 8192
   address: "127.0.0.1"
   advertise: "localhost"
-  buffer:  192 * 1024 * 30 # 192Kbps * 30s
+  buffer:  192 * 125 * 30 # 192Kbps * 30s
   mount:  "/listen"
 
   constructor: (o) ->
