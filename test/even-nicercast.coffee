@@ -32,6 +32,7 @@ describe "EvenNicercast", ->
         advertise: "remotehost"
         buffer:  192 * 1024 * 31 # 192Kbps * 30s
         mount:  "/mounttest"
+        playlist: "/test.m3u"
 
       server = new Server options
 

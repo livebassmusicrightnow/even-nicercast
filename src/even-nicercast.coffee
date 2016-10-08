@@ -16,6 +16,7 @@ class EvenNicercast extends stream.PassThrough
   advertise: "localhost"
   buffer:  192 * 125 * 30 # 192Kbps * 30s
   mount:  "/listen"
+  playlist: "/listen.m3u"
 
   constructor: (o) ->
     @[key] = value for key, value of o
@@ -27,8 +28,7 @@ class EvenNicercast extends stream.PassThrough
     @setupRoutes()
 
   setupRoutes: ->
-    @app.get "/",           @playlistEndpoint
-    @app.get "/listen.m3u", @playlistEndpoint
+    @app.get @playlist,     @playlistEndpoint
     # audio endpoint
     @app.get @mount,     @listener
 
