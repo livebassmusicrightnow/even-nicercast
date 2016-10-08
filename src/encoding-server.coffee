@@ -7,18 +7,21 @@ class EncodingServer extends stream.PassThrough
 
   log:   console.log
   error: console.error
-  port:  8000
 
   # 16-bit signed samples
   SAMPLE_SIZE: 16
   CHANNELS:    2
   SAMPLE_RATE: 44100
 
-  constructor: (o) ->
-    @[key] = value for key, value of o
-    @log "creating"
-    super()
 
+  constructor: (o = {}, encodingOptions) ->
+    super
+
+    @[key] = value for key, value of encodingOptions
+    @log   = o.log   if o.log
+    @error = o.error if o.error
+
+    @server = new EvenNicercast o
 
     # setup encoder
     Lame     = require "lame"
@@ -26,11 +29,6 @@ class EncodingServer extends stream.PassThrough
       channels:   @CHANNELS
       bitDepth:   @SAMPLE_SIZE
       sampleRate: @SAMPLE_RATE
-
-    @server = new EvenNicercast
-      log:   @log
-      error: @error
-      port:  @port
 
     @pipe @encoder
     @encoder.pipe @server
