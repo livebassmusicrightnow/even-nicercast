@@ -1,44 +1,41 @@
-stream        = require "stream"
+util          = require "util"
 EvenNicercast = require "./even-nicercast"
+extend        = util._extend
 
 
-class EncodingServer extends stream.PassThrough
-  logPrefix: "(EvenNicercast:EncodingServer)"
+try
+  Lame     = require "lame"
+catch e
+  console.error "lame not installed"
 
-  log:   console.log
-  error: console.error
 
-  # 16-bit signed samples
-  SAMPLE_SIZE: 16
-  CHANNELS:    2
-  SAMPLE_RATE: 44100
+if Lame
+  class EncodingServer extends Lame.Encoder
+    logPrefix: "(EvenNicercast:EncodingServer)"
 
-  BIT_RATE:    128
+    defaults: # 16-bit signed samples
+      channels:   2
+      bitDepth:   16
+      sampleRate: 44100
 
-  constructor: (o = {}, encodingOptions) ->
-    super
+      bitRate:    128
 
-    @[key] = value for key, value of encodingOptions
-    @log   = o.log   if o.log
-    @error = o.error if o.error
-    o.buffer or= @BIT_RATE * 125 * 30 # Kbps * 30s
+    constructor: (o = {}, eo = {}) ->
+      encodingOptions = extend {}, @defaults
+      encodingOptions = extend encodingOptions, eo
 
-    @server = new EvenNicercast o
+      super encodingOptions
 
-    # setup encoder
-    Lame     = require "lame"
-    @encoder = new Lame.Encoder
-      channels:   @CHANNELS
-      bitDepth:   @SAMPLE_SIZE
-      sampleRate: @SAMPLE_RATE
-      bitRate:    @BIT_RATE
+      o.buffer or= @bitRate * 125 * 30 # Kbps * 30s
+      @server = new EvenNicercast o
+      @pipe @server
+      @server.on  "error", @passError
 
-    @pipe @encoder
-    @encoder.pipe @server
+    passError: (err) => @emit "error", err
 
-  setMetadata: -> @server.setMetadata()
-  start: -> @server.start()
-  stop: -> @server.stop()
+    setMetadata: -> @server.setMetadata()
+    start: -> @server.start()
+    stop: -> @server.stop()
 
 
 module.exports = EncodingServer
